@@ -1,7 +1,10 @@
 ﻿using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
@@ -16,16 +19,45 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
             List<Product> objProductList = _unitOfWork.Product.GetAll().ToList();   //which repository we rae working on (Product Repo...)
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.Id.ToString()
+            });
             return View(objProductList);
         }
 
-        public IActionResult Create()     //Default [HttpGet]
+        public IActionResult Upsert(int? id)     //Default [HttpGet]   //Create removed and Update + Insert added
         {
-            return View();
+            //ViewBag.CategoryList = CategoryList;
+            //ViewData["CategoryList"] = CategoryList;
+            ProductViewModel productViewModel = new ProductViewModel() //ProductViewModel productViewModel = new();
+            { 
+                CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+            Product = new Product()
+            };
+
+            if (id == null || id == 0)
+            {
+                //Create
+                return View(productViewModel);
+            }
+            else
+            { 
+                //Update
+                productViewModel.Product = _unitOfWork.Product.Get(u=>u.Id==id);
+                return View(productViewModel);
+            }
+
+            return View(productViewModel);
         }
 
         [HttpPost]
-        public IActionResult Create(Product obj)
+        public IActionResult Upsert(ProductViewModel productViewModel, IFormFile? file)
         {
             //if (obj.Name == obj.DisplayName.ToString())
             //{
@@ -38,15 +70,25 @@ namespace BulkyWeb.Areas.Admin.Controllers
             //}
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(obj);  //which repository we rae working on (Product Repo...)
+                _unitOfWork.Product.Add(productViewModel.Product);  //which repository we rae working on (Product Repo...)
                 _unitOfWork.Save();
                 TempData["Success"] = "Product Created Successfully";
                 return RedirectToAction("Index");
             }
-            return View();
+
+            else 
+            {
+                productViewModel.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+                return View(productViewModel);
+            }
+            
         }
 
-        public IActionResult Edit(int? id)             //Default [HttpGet]
+        /*public IActionResult Edit(int? id)             //Default [HttpGet]
         {
             if (id == 0 || id == null)
             {
@@ -82,7 +124,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
             return View();
-        }
+        }*/
 
 
         public IActionResult Delete(int? id)             //Default [HttpGet]
