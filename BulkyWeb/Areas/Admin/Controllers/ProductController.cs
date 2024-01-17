@@ -82,7 +82,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                     { 
                         file.CopyTo(fileStream);    
                     }
-                    productViewModel.Product.ImageURL = @"\images\products\" + fileName;   //save in images->product
+                    productViewModel.Product.ImageURL = @"\images\product\" + fileName;   //save in images->product
                 }
                 _unitOfWork.Product.Add(productViewModel.Product);  //which repository we rae working on (Product Repo...)
                 _unitOfWork.Save();
