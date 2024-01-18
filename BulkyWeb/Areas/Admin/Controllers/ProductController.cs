@@ -20,7 +20,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> objProductList = _unitOfWork.Product.GetAll().ToList();   //which repository we rae working on (Product Repo...)
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();   //which repository we rae working on (Product Repo...)
             IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
             {
                 Text = u.Name,

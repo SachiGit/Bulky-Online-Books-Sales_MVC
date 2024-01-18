@@ -19,6 +19,7 @@ namespace Bulky.DataAccess.Repository
             _db = db;
             this.dbSet = _db.Set<A>();
             //_db.Categories == dbSet;
+            _db.Products.Include(u => u.Category).Include(u => u.CategoryId);
         }
 
         public void Add(A entity)
@@ -26,17 +27,37 @@ namespace Bulky.DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        public A Get(Expression<Func<A, bool>> filter)
+        public A Get(Expression<Func<A, bool>> filter, string? includeProperties = null)
         {
             IQueryable<A> q = dbSet;
             q= q.Where(filter);
 
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    q = q.Include(includeProp);
+                }
+            }
+
             return q.FirstOrDefault();
         }
 
-        public IEnumerable<A> GetAll()
+        //Category, CoverType
+        public IEnumerable<A> GetAll(string? includeProperties = null)
         {
             IQueryable<A> q = dbSet;
+
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                { 
+                    q = q.Include(includeProp); 
+                }
+            }
+
             return q.ToList();
         }
 
