@@ -10,7 +10,8 @@
     </div>
     <div class="card-body p-4">
         <form method="post" class="row" enctype="multipart/form-data">
-            <input asp-for="Product.Id" hidden />
+            @* <input hidden asp-for="Product.Id" /> *@
+            <input hidden asp-for="Product.ImageURL"/>
             <div class="row">
                 <div class="col-10">
                     <div class="border p-3">

@@ -78,12 +78,34 @@ namespace BulkyWeb.Areas.Admin.Controllers
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, @"images\product");
 
+                    if (!string.IsNullOrEmpty(productViewModel.Product.ImageURL))   //Check a new Image URL comming or not
+                    {
+                        
+                        var oldImagePath = Path.Combine(wwwRootPath, productViewModel.Product.ImageURL.TrimStart('\\'));
+                        //Delete the Old Image
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
                     using (var fileStream = new FileStream(Path.Combine(productPath, fileName),FileMode.Create)) 
                     { 
                         file.CopyTo(fileStream);    
                     }
                     productViewModel.Product.ImageURL = @"\images\product\" + fileName;   //save in images->product
                 }
+
+                if (productViewModel.Product.Id == 0)
+                {
+                    _unitOfWork.Product.Add(productViewModel.Product);
+                }
+
+                else 
+                {
+                    _unitOfWork.Product.Update(productViewModel.Product);
+                }
+
                 _unitOfWork.Product.Add(productViewModel.Product);  //which repository we rae working on (Product Repo...)
                 _unitOfWork.Save();
                 TempData["Success"] = "Product Created Successfully";
