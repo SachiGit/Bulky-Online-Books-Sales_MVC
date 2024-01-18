@@ -106,7 +106,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                     _unitOfWork.Product.Update(productViewModel.Product);
                 }
 
-                _unitOfWork.Product.Add(productViewModel.Product);  //which repository we rae working on (Product Repo...)
+                //_unitOfWork.Product.Add(productViewModel.Product);  //which repository we are working on (Product Repo...)
                 _unitOfWork.Save();
                 TempData["Success"] = "Product Created Successfully";
                 return RedirectToAction("Index");
