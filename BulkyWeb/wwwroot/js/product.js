@@ -1,7 +1,7 @@
 var dataTable;
 
-$(documnent).ready(function () {   //Chrome browser error- "Uncaught ReferenceError: documnent is not defined"
-    //console.log("test")
+$(document).ready(function () {   
+    console.log("test")
     loadDataTable();
 })
 
