@@ -20,8 +20,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();   //which repository we rae working on (Product Repo...)
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();   //which repository we are working on (Product Repo...)
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem    //Not in Instructor's video
             {
                 Text = u.Name,
                 Value = u.Id.ToString()
@@ -192,5 +192,16 @@ namespace BulkyWeb.Areas.Admin.Controllers
             TempData["Success"] = "Product Deleted Successfully";
             return RedirectToAction("Index");
         }
+
+        //API Handles
+        #region API CALLS       
+
+        [HttpGet]
+        public IActionResult GetAll() 
+        {
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            return Json(new { data = objProductList });
+        }
+        #endregion
     }
 }
