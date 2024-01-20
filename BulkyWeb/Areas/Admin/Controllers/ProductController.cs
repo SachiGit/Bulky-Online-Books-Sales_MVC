@@ -5,6 +5,7 @@ using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
@@ -163,35 +164,35 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }*/
 
 
-        public IActionResult Delete(int? id)             //Default [HttpGet]
-        {
-            if (id == 0 || id == null)
-            {
-                NotFound();
-            }
-            Product? productFromDb = _unitOfWork.Product.Get(u => u.Id == id);                         //Method 1
-            //Product? productFromDb1 = _db.Categories.FirstOrDefault(a=>a.Id==id);             //Method 2
-            //Product? productFromDb2 = _db.Categories.Where(a=>a.Id==id).FirstOrDefault();     //Method 3
-            if (productFromDb == null)
-            {
-                return NotFound();
-            }
-            return View(productFromDb);
-        }
+        //public IActionResult Delete(int? id)             //Default [HttpGet]  //Removed due to repeating on 'public IActionResult Delete(int? id)'  //Line #207
+        //{
+        //    if (id == 0 || id == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    Product? productFromDb = _unitOfWork.Product.Get(u => u.Id == id);                         //Method 1
+        //    //Product? productFromDb1 = _db.Categories.FirstOrDefault(a=>a.Id==id);             //Method 2
+        //    //Product? productFromDb2 = _db.Categories.Where(a=>a.Id==id).FirstOrDefault();     //Method 3
+        //    if (productFromDb == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(productFromDb);
+        //}
 
-        [HttpPost, ActionName("Delete")]     //Explicitly defined the End point 'Delete' Action
-        public IActionResult DeletePost(int? id)
-        {
-            Product? obj = _unitOfWork.Product.Get(u => u.Id == id);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.Product.Remove(obj);
-            _unitOfWork.Save();
-            TempData["Success"] = "Product Deleted Successfully";
-            return RedirectToAction("Index");
-        }
+        //[HttpPost, ActionName("Delete")]     //Explicitly defined the End point 'Delete' Action
+        //public IActionResult DeletePost(int? id)
+        //{
+        //    Product? obj = _unitOfWork.Product.Get(u => u.Id == id);
+        //    if (obj == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    _unitOfWork.Product.Remove(obj);
+        //    _unitOfWork.Save();
+        //    TempData["Success"] = "Product Deleted Successfully";
+        //    return RedirectToAction("Index");
+        //}
 
         //API Handles
         #region API CALLS       
@@ -201,6 +202,29 @@ namespace BulkyWeb.Areas.Admin.Controllers
         {
             List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
             return Json(new { data = objProductList });
+        }
+
+        //[HttpDelete]
+        public IActionResult delete(int? id)
+        {
+            var productToBeDeleted = _unitOfWork.Product.Get(u => u.Id == id);   //based on ID we are getting the Product 
+            if (productToBeDeleted == null)
+            {
+                return Json(new { success = false, message = "Error while Deleting" });   //If Product to be Delete NULL, ERROR!
+            }
+
+            var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, productToBeDeleted.ImageURL.TrimStart('\\'));
+            //Delete the Old Image
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);           //Delete image record from DB
+            }
+
+            _unitOfWork.Product.Remove(productToBeDeleted);      // Pass the Product that should be Deleted!
+            _unitOfWork.Save();
+
+            return Json(new { success = true, Message = "Delete Successfull" });
+
         }
         #endregion
     }
