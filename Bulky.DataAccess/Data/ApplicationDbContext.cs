@@ -1,10 +1,12 @@
 ﻿using Bulky.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 //using BulkyWeb.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bulky.DataAccess.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)      
         {
@@ -16,6 +18,8 @@ namespace Bulky.DataAccess.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)  //At Once??
         {
+            base.OnModelCreating(modelBuilder);    //This is an essential configuration. Keys of Identity tables are mapped in the Model creating. So this method is added. If not Exception will occur
+
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "War", DisplayName = 2 },
                 new Category { Id = 2, Name = "Thriller", DisplayName = 5 },

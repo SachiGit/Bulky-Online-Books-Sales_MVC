@@ -55,8 +55,6 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 productViewModel.Product = _unitOfWork.Product.Get(u=>u.Id==id);
                 return View(productViewModel);
             }
-
-            return View(productViewModel);
         }
 
         [HttpPost]
