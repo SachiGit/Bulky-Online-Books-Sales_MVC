@@ -17,6 +17,8 @@ namespace Bulky.DataAccess.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
 
+        public DbSet<ApplicationUser> applicationUsers { get; set; }  //For ApplicationUser.cs (Adding Extra Columns to AspNetUsers Tbl)
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)  //At Once??
         {
             base.OnModelCreating(modelBuilder);    //This is an essential configuration. Keys of Identity tables are mapped in the Model creating. So this method is added. If not Exception will occur
