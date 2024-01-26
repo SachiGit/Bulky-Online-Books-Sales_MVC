@@ -2,6 +2,8 @@
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
+using Bulky.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,6 +12,7 @@ using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = StaticDetails.Role_Admin)]  //Globally //Access All Action Methods If Admin Role LoggedIn. Individually Can Be Allpied Also
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
