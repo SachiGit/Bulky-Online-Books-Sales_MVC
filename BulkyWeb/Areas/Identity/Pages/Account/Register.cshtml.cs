@@ -105,9 +105,18 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            public string? Role { get; set; }    //For adding DD_List
+            public string? Role { get; set; }    //For adding Role DD_List
             [ValidateNever]
-            public IEnumerable<SelectListItem> RoleList { get; set; }   //For adding DD_List
+            public IEnumerable<SelectListItem> RoleList { get; set; }   //For adding Role DD_List
+
+            [Required]
+            public string Name { get; set; }
+            public string? StreeAddress { get; set; }
+            public string? City { get; set; }
+            public string? State { get; set; }
+            public string? PostalCode { get; set; }
+            public string? PhoneNumber { get; set; }
+
 
         }
 
@@ -138,7 +147,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)   //POST Handler
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)   //POST Handler, when post all comes here
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -149,6 +158,14 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);   //helper method- Create User
+
+                //Populating the new fields
+                //user.Name = Input.Name;
+                user.StreeAddress = Input.StreeAddress;
+                user.City = Input.City;
+                user.State = Input.State;
+                user.PostalCode = Input.PostalCode;
+                user.PhoneNumber = Input.PhoneNumber;
 
                 if (result.Succeeded)
                 {
