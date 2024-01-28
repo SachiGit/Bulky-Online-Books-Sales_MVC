@@ -16,6 +16,7 @@ namespace Bulky.DataAccess.Data
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Company> Companies { get; set; }
 
         public DbSet<ApplicationUser> applicationUsers { get; set; }  //For ApplicationUser.cs (Adding Extra Columns to AspNetUsers Tbl)
 
@@ -28,6 +29,13 @@ namespace Bulky.DataAccess.Data
                 new Category { Id = 2, Name = "Thriller", DisplayName = 5 },
                 new Category { Id = 3, Name = "Horror", DisplayName = 8 }
                 );
+
+
+            modelBuilder.Entity<Company>().HasData(
+              new Company { Id = 4, Name = "ABC", StreetAddress = "No.55, 1st Cross St.", City= "Nugegoda", State = "Western", PostalCode = "12344", PhoneNumber = "0777151165"},
+              new Company { Id = 5, Name = "DEF", StreetAddress = "No.45/90. Main St.", City = "Kotte", State = "Western", PostalCode = "55321", PhoneNumber = "01123644588" },
+              new Company { Id = 6, Name = "GHI", StreetAddress = "No.321/1 Bulles St.", City = "Dematagoda", State = "Western", PostalCode = "10201", PhoneNumber = "0115789641" }
+              );
 
             modelBuilder.Entity<Product>().HasData(
                 new Product

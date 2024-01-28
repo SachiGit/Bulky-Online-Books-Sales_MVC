@@ -4,6 +4,7 @@ using Bulky.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bulky.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240127131802_Create_CompanyTbl_inDatabase")]
+    partial class Create_CompanyTbl_inDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,38 +96,6 @@ namespace Bulky.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 4,
-                            City = "Nugegoda",
-                            Name = "ABC",
-                            PhoneNumber = "0777151165",
-                            PostalCode = "12344",
-                            State = "Western",
-                            StreetAddress = "No.55, 1st Cross St."
-                        },
-                        new
-                        {
-                            Id = 5,
-                            City = "Kotte",
-                            Name = "DEF",
-                            PhoneNumber = "01123644588",
-                            PostalCode = "55321",
-                            State = "Western",
-                            StreetAddress = "No.45/90. Main St."
-                        },
-                        new
-                        {
-                            Id = 6,
-                            City = "Dematagoda",
-                            Name = "GHI",
-                            PhoneNumber = "0115789641",
-                            PostalCode = "10201",
-                            State = "Western",
-                            StreetAddress = "No.321/1 Bulles St."
-                        });
                 });
 
             modelBuilder.Entity("Bulky.Models.Product", b =>

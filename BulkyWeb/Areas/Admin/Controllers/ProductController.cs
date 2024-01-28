@@ -12,7 +12,7 @@ using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = StaticDetails.Role_Admin)]  //Globally //Access All Action Methods If Admin Role LoggedIn. Individually Can Be Allpied Also
+    //[Authorize(Roles = StaticDetails.Role_Admin)]  //Globally //Access All Action Methods If Admin Role LoggedIn. Individually Can Be Allpied Also
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
