@@ -1,7 +1,9 @@
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -24,8 +26,34 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         public IActionResult Details(int productId)   //Showing all information when click the 'Details' Btn 
         {
-            Product product = _unitOfWork.Product.Get(u=>u.Id== productId, includeProperties: "Category");
-            return View(product);
+            ShoppingCart s_Cart = new()       // Getting a ShoppingCart Type Object when Details Btn clicked
+            {
+                Product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category"),
+                Count = 1,
+                ProductId = productId
+            };
+            return View(s_Cart);
+        }
+
+        [HttpPost]
+        [Authorize]  //If some one is posting he/she should be Authorized | Does not care the Role | Just Logged in to the WebSite!
+        public IActionResult Details(ShoppingCart shoppingCart)   //ShoppingCart
+        {
+            //Get the loggedin user's user id with the help of Helper Method...
+            var claimID = (ClaimsIdentity)User.Identity;    ///default methods
+            var userId = claimID.FindFirst(ClaimTypes.NameIdentifier).Value;
+            shoppingCart.ApplicationUserId = userId;
+
+            _unitOfWork.ShoppingCart.Add(shoppingCart);
+            _unitOfWork.Save();
+
+            //TODO ??? Video Lesson-135 
+            //If same user same product cart must be updated else we have to create newly...
+
+
+
+            //return View();
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()
