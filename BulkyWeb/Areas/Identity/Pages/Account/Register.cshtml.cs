@@ -179,12 +179,18 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);   //helper method- Create User
 
                 //Populating the new fields
-                //user.Name = Input.Name;
+                user.Name = Input.Name;
                 user.StreeAddress = Input.StreeAddress;
                 user.City = Input.City;
                 user.State = Input.State;
                 user.PostalCode = Input.PostalCode;
                 user.PhoneNumber = Input.PhoneNumber;
+
+                if (Input.Role == StaticDetails.Role_Company)
+                { 
+                    user.CompanyId = Input.CompanyId;
+                }
+
 
                 if (result.Succeeded)
                 {

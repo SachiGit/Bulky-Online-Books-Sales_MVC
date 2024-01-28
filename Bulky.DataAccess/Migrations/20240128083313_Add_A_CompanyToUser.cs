@@ -17,7 +17,7 @@ namespace Bulky.DataAccess.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
-                name: "ConpanyId",
+                name: "CompanyId",
                 table: "AspNetUsers",
                 type: "int",
                 nullable: true);
@@ -52,7 +52,7 @@ namespace Bulky.DataAccess.Migrations
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
-                name: "ConpanyId",
+                name: "CompanyId",
                 table: "AspNetUsers");
         }
     }

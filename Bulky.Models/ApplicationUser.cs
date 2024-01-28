@@ -19,7 +19,7 @@ namespace Bulky.Models
         public string? State { get; set; }
         public string? PostalCode { get; set; }
 
-        public int? ConpanyId { get; set; }
+        public int? CompanyId { get; set; }
         [ForeignKey("CompanyId")]                 //Adding FK (Company ID) to Application User when user have a bond with company
         [ValidateNever]
         public Company Company { get; set; }
