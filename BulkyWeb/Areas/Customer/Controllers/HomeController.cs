@@ -44,14 +44,21 @@ namespace BulkyWeb.Areas.Customer.Controllers
             var userId = claimID.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.ApplicationUserId = userId;
 
-            _unitOfWork.ShoppingCart.Add(shoppingCart);
+            //If same user same product cart must be update, else we have to create a new cart...
+            ShoppingCart cartFromDB = _unitOfWork.ShoppingCart.Get(u=> u.ProductId == shoppingCart.ProductId && 
+            u.ApplicationUserId == userId);
+
+            if (cartFromDB!= null)   //Record is available, we should do the Addition
+            {               
+                cartFromDB.Count += shoppingCart.Count;
+                _unitOfWork.ShoppingCart.Update(cartFromDB);
+            }
+            else   //Create a New Cart
+            {              
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+            }
             _unitOfWork.Save();
-
-            //TODO ??? Video Lesson-135 
-            //If same user same product cart must be updated else we have to create newly...
-
-
-
+            TempData["success"] = "Cart Updated Successfully!";
             //return View();
             return RedirectToAction(nameof(Index));
         }

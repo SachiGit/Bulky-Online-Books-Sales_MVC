@@ -25,8 +25,6 @@ namespace Bulky.DataAccess.Repository.IRepository
             Company = new CompanyRepository(_db);          
             
         }
-        
-
         public void Save()
         {
             _db.SaveChanges();
