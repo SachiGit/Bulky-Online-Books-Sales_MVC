@@ -32,7 +32,7 @@ namespace Bulky.DataAccess.Repository
             IQueryable<A> q;
             if (tracked != false)    //tracked is TRUE
             {
-               q = dbSet;              
+                q = dbSet;
             }
             else                   //tracked is FALSE
             {
@@ -53,17 +53,22 @@ namespace Bulky.DataAccess.Repository
             return q.FirstOrDefault();
         }
 
-        //Category, CoverType
-        public IEnumerable<A> GetAll(string? includeProperties = null)
+        //Any Category, CoverType
+        public IEnumerable<A> GetAll(Expression<Func<A, bool>>? filter, string? includeProperties = null)    //GET ALL
         {
             IQueryable<A> q = dbSet;
+
+            if (filter != null)
+            {
+                q = q.Where(filter);
+            }
 
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var includeProp in includeProperties
                     .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                { 
-                    q = q.Include(includeProp); 
+                {
+                    q = q.Include(includeProp);
                 }
             }
 
@@ -72,7 +77,7 @@ namespace Bulky.DataAccess.Repository
 
         public void Remove(A entity)
         {
-           dbSet.Remove(entity);
+            dbSet.Remove(entity);
         }
 
         public void RemoveRange(IEnumerable<A> entity)
