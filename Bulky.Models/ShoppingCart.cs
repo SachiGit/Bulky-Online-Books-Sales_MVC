@@ -22,5 +22,8 @@ namespace Bulky.Models
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
+
+        [NotMapped]    //Only for Display purposes, Not added to the DB and this Columns is not created in DB
+        public double Price { get; set; }
     }
 }
