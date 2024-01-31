@@ -21,19 +21,49 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         public IActionResult Index()                                            // Shopping Cart Index Action
         {
-            var claimID = (ClaimsIdentity)User.Identity;    ///default methods
+            var claimID = (ClaimsIdentity)User.Identity;    //default methods
             var userId = claimID.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             ShoppingCartViewModel = new()
             {
                 ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
-                includeProperties: "Product")
+                includeProperties: "Product"),
+                OrderHeader = new()
             };
 
-            foreach (var cart in ShoppingCartViewModel.ShoppingCartList)
+            foreach (var cart in ShoppingCartViewModel.ShoppingCartList)  //Order Total Calculating
             {
                 cart.Price = GetPriceBaseOn_Qty(cart);      //Price=> ShoppingCart.cs--> [Not Mapped] variable | Only for calculate and display | Not added to the DB col.
-                ShoppingCartViewModel.OrderTotal += (cart.Price * cart.Count);
+                ShoppingCartViewModel.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+            }
+
+            return View(ShoppingCartViewModel);
+        }
+
+        public IActionResult OrderSummary()             //Shopping Cart Order Summary Action
+        {
+            var claimID = (ClaimsIdentity)User.Identity;    //default methods
+            var userId = claimID.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            ShoppingCartViewModel = new()
+            {
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
+                includeProperties: "Product"),
+                OrderHeader = new()
+            };
+            ShoppingCartViewModel.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+
+            ShoppingCartViewModel.OrderHeader.Name = ShoppingCartViewModel.OrderHeader.ApplicationUser.Name;
+            ShoppingCartViewModel.OrderHeader.PhoneNumber = ShoppingCartViewModel.OrderHeader.ApplicationUser.PhoneNumber;
+            ShoppingCartViewModel.OrderHeader.StreeAddress = ShoppingCartViewModel.OrderHeader.ApplicationUser.StreeAddress;
+            ShoppingCartViewModel.OrderHeader.City = ShoppingCartViewModel.OrderHeader.ApplicationUser.City;
+            ShoppingCartViewModel.OrderHeader.State = ShoppingCartViewModel.OrderHeader.ApplicationUser.State;
+            ShoppingCartViewModel.OrderHeader.PostalCode = ShoppingCartViewModel.OrderHeader.ApplicationUser.PostalCode;
+            
+            foreach (var cart in ShoppingCartViewModel.ShoppingCartList)   //Order Total Calculating
+            {
+                cart.Price = GetPriceBaseOn_Qty(cart);      //Price=> ShoppingCart.cs--> [Not Mapped] variable | Only for calculate and display | Not added to the DB col.
+                ShoppingCartViewModel.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
             return View(ShoppingCartViewModel);

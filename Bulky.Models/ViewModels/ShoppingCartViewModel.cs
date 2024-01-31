@@ -9,6 +9,8 @@ namespace Bulky.Models.ViewModels
     public class ShoppingCartViewModel
     {
         public IEnumerable<ShoppingCart> ShoppingCartList { get; set; }        //For Shopping Cart Items List
-        public double OrderTotal { get; set;}
+
+        public OrderHeader OrderHeader { get; set; }  //'OrderTotal' is already in OrderHeader
+        //public double OrderTotal { get; set;}       //'OrderTotal' is already in OrderHeader
     }
 }
