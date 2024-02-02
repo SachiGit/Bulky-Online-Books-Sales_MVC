@@ -6,12 +6,17 @@ using Microsoft.AspNetCore.Identity;
 using Bulky.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.    //dependency injection container
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//Stripe Registrations
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
 
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();    //Default code line
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();    //'(options => options.SignIn.RequireConfirmedAccount = true)' is removed so then Email is not confirmed
@@ -44,9 +49,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+StripeConfiguration.ApiKey=builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();      //Get the string type Stripe Secret Key and assigned to the Stripe Config.
 app.UseRouting();
-
 app.UseAuthentication(); //is the 1st, it will check the validity of U/n and P/w and checkin the person
 app.UseAuthorization();  //is the 2nd, if U/n and P/w valid now person can grant the access to the website with the given previlages
 app.MapRazorPages();     //Razor Page Pipe Line Added
