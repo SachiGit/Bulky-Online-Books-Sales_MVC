@@ -26,7 +26,8 @@ namespace Bulky.Models
         public DateTime PaymentDate { get; set; }
         public DateOnly PaymentDueDate { get; set; }   //DateTime is also fine
 
-        public string? PaymentIntentId { get; set; }
+        public string? SessionId { get; set; }             
+        public string? PaymentIntentId { get; set; }   //   This is only created if the Payment is successfull
 
 
         [Required]

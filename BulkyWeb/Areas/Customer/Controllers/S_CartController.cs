@@ -4,6 +4,7 @@ using Bulky.Models.ViewModels;
 using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace BulkyWeb.Areas.Customer.Controllers
@@ -128,10 +129,45 @@ namespace BulkyWeb.Areas.Customer.Controllers
 			{
                 //Normal Customer | So we have to track the payments
                 //Stripe Logic Here
-			}
-            //return View(ShoppingCartViewModel);   //ToDo Redirecting to a Confirmation Page
-            return RedirectToAction(nameof(OrderConfirmation), new { id = ShoppingCartViewModel.OrderHeader.Id });
-		}
+
+                    var domain = "https://localhost:7256/";
+				    var options = new SessionCreateOptions    //Code from Link--> "https://stripe.com/docs/api/checkout/sessions/create?lang=dotnet"
+					{
+					    SuccessUrl = domain+ $"Customer/S_Cart/OrderConfirmation?id={ShoppingCartViewModel.OrderHeader.Id}",
+                        CancelUrl = domain+ "Customer/S_Cart/index",
+						LineItems = new List<SessionLineItemOptions>(),  //Contain with all the product details | List type
+	                    Mode = "payment",
+				    };
+
+                //configure line items...
+                foreach (var item in ShoppingCartViewModel.ShoppingCartList)
+                {
+                    var sessionLineItem = new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions     //For New Price Object   ('SessionLineItemPriceDataOptions' is builIn class in STRIPE)
+						{
+                            UnitAmount = (long)(item.Price * 100), //$10.25 => 1025
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = item.Product.Title     //Getting Product TITLE for 'Product Data'
+                            }
+                        },
+                        Quantity = item.Count
+                    };
+                    options.LineItems.Add(sessionLineItem);        //All items will be added to Line items
+                }
+
+				    var service = new SessionService();   //Create new Session service (All are creating with Default methods)
+				    Session session = service.Create(options);
+
+                    _unitOfWork.OrderHeader.UpdateStripePaymentID(ShoppingCartViewModel.OrderHeader.Id, session.Id, session.PaymentIntentId);
+                    _unitOfWork.Save();
+                    Response.Headers.Add("Location", session.Url);
+                    return new StatusCodeResult(303);
+			}               
+                return RedirectToAction(nameof(OrderConfirmation), new { id = ShoppingCartViewModel.OrderHeader.Id });
+        }
 
         public IActionResult OrderConfirmation(int id)
         {
